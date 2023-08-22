@@ -12,6 +12,21 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.token>7fadb40973eb353eb2af3a65ded940d2ff712b9f</sonar.token>
+        <sonar.projectKey>beemaya13_chatGPT-testing</sonar.projectKey>
+        <sonar.organization>beemaya13</sonar.organization>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.9.0.2155</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
