@@ -15,4 +15,5 @@ public class Main
         System.out.println(validateString("aa1! ", 10));    // false
         System.out.println(validateString("aa1!hfjdkdjhkgjhhdehujfuhydn", 10));    // false
     }
+    //STOP WORKING
 }
