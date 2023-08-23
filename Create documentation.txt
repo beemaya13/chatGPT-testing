@@ -1,0 +1,108 @@
+ChatGPT, please write сlear and concise documentation that should be provided for the regular expression,
+explaining how it works, and any caveats or limitations.
+
+This documentation is for Readme.md file for Java application "StringValidatorApp".
+Application description: 1 paragraph, 2-5 Sentences.
+Regex implementation description: 1 paragraph, 4-10 Sentences.
+Information on how to run the developed application "StringValidatorApp" locally.
+
+Application itself:
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class StringValidatorApp
+{
+    private static final Logger logger = LoggerFactory.getLogger(StringValidatorApp.class);
+
+    public static void main(String[] args)
+    {
+        if (args.length != 2)
+        {
+            logger.info("Usage: java StringValidatorApp <inputString> <maxLength>");
+            return;
+        }
+
+        String inputString = args[0];
+        int maxLength;
+
+        try
+        {
+            maxLength = Integer.parseInt(args[1]);
+        }
+        catch (NumberFormatException e)
+        {
+            logger.error("Error: The second argument should be an integer representing the maximum length.");
+            return;
+        }
+
+        boolean isValid = RegexValidator.validateString(inputString, maxLength);
+        if (isValid)
+        {
+            logger.info("The input string is valid.");
+        }
+        else
+        {
+            logger.info("The input string is invalid.");
+        }
+    }
+}
+
+import java.util.regex.Pattern;
+public final class RegexValidator
+{
+
+    /**
+     * Validate a string against given constraints.
+     *
+     * @param input     The string to validate.
+     * @param maxLength The maximum allowable length for the input string.
+     * @return True if the string meets the criteria, otherwise false.
+     */
+    public static boolean validateString(String input, int maxLength)
+    {
+        // Build the regex dynamically based on the provided maxLength
+        String regex = String.format(
+                "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!\"#$%%&'()*+,-./:;<=>?@\\[\\]^_`{|}~])" + // At least one upper, lower, digit, special char
+                        "[A-Za-z\\d!\"#$%%&'()*+,-./:;<=>?@\\[\\]^_`{|}~]{1,%d}$", // Character class to ensure only allowed chars and validate length
+                maxLength);
+
+        return Pattern.matches(regex, input);
+    }
+
+    private RegexValidator() {
+        throw new UnsupportedOperationException("This is a utility class for validation and cannot be instantiated");
+    }
+}
+____________________________________________________________________________________________________________________
+# **StringValidatorApp Documentation**
+
+## **Application Description**
+`StringValidatorApp` is a Java application that validates an input string against a specified maximum length and a set of constraints. The string must contain at least one uppercase letter, one lowercase letter, one digit, and one special character. The application then outputs whether the input string is valid or not.
+
+## **Regex Implementation Description**
+The core of this application's validation logic lies within the `RegexValidator` class, which uses a regular expression to perform validation. The regex is dynamically built based on the provided `maxLength`. It checks for the presence of at least one uppercase letter, one lowercase letter, one numeric digit, and one of the specified special characters. The regex then ensures that only characters from the defined set are present in the input and validates the string's length to ensure it doesn't exceed `maxLength`. It's worth noting that this regex might not handle some edge cases with certain character combinations or unique encodings, so thorough testing is recommended before deployment in a production environment.
+
+## **Running StringValidatorApp Locally**
+
+1. **Prerequisites:** Ensure you have Java and the required libraries (e.g., SLF4J) installed on your machine.
+
+2. **Compile the Application:** Navigate to the directory containing `StringValidatorApp.java` and `RegexValidator.java`. Compile both classes:
+    ```bash
+    javac StringValidatorApp.java RegexValidator.java
+    ```
+
+3. **Run the Application:** After successful compilation, run the application with two arguments - the input string to be validated and the maximum length the string can have.
+    ```bash
+    java StringValidatorApp "<inputString>" <maxLength>
+    ```
+
+   **Example:**
+    ```bash
+    java StringValidatorApp "Aa1!" 4
+    ```
+
+4. The application will then output whether the input string is valid or not.
+
+## **Note**:
+Remember to ensure your classpath includes the required libraries or you may encounter runtime errors.
