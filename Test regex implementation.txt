@@ -184,4 +184,213 @@ public void testValidInput() {
 
 Thanks for pointing that out!
 _________________________________________________________________________________________
+ChatGPT,  how should look like Main method in Java application with passing parameters from the command line if I have RegexValidator class and two parameters - input string to validate and maximum string length?
+
+import java.util.regex.Pattern;
+public final class RegexValidator
+{
+
+    /**
+     * Validate a string against given constraints.
+     *
+     * @param input     The string to validate.
+     * @param maxLength The maximum allowable length for the input string.
+     * @return True if the string meets the criteria, otherwise false.
+     */
+    public static boolean validateString(String input, int maxLength)
+    {
+        // Build the regex dynamically based on the provided maxLength
+        String regex = String.format(
+                "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!\"#$%%&'()*+,-./:;<=>?@\\[\\]^_`{|}~])" + // At least one upper, lower, digit, special char
+                        "[A-Za-z\\d!\"#$%%&'()*+,-./:;<=>?@\\[\\]^_`{|}~]{1,%d}$", // Character class to ensure only allowed chars and validate length
+                maxLength);
+
+        return Pattern.matches(regex, input);
+    }
+
+    private RegexValidator() {
+        throw new UnsupportedOperationException("This is a utility class for validation and cannot be instantiated");
+    }
+}
+_________________________________________________________________________________________
+If you want to utilize the `RegexValidator` class and validate an input string using parameters passed from the command line, then you can write a `main` method inside another class, let's call it `MainApp`. The `main` method should fetch the command line parameters and use them for the validation.
+
+Here's an example:
+
+```java
+public class MainApp {
+
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.out.println("Usage: java MainApp <inputString> <maxLength>");
+            return;
+        }
+
+        String inputString = args[0];
+        int maxLength;
+
+        try {
+            maxLength = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: The second argument should be an integer representing the maximum length.");
+            return;
+        }
+
+        boolean isValid = RegexValidator.validateString(inputString, maxLength);
+        if (isValid) {
+            System.out.println("The input string is valid.");
+        } else {
+            System.out.println("The input string is invalid.");
+        }
+    }
+}
+```
+
+To run the program, you'd compile both classes (`MainApp` and `RegexValidator`) and then run the `MainApp` class with the desired arguments, for example:
+
+```
+java MainApp "Aa1!" 10
+```
+
+This would validate the string "Aa1!" against the regular expression, ensuring it contains at least one uppercase letter, one lowercase letter, one digit, and one special character, and does not exceed a length of 10.
+_____________________________________________________________________________________________
+When I run command java Main "Aa1!" 10 - it says:
+
+Error: Could not find or load main class Main
+Caused by: java.lang.ClassNotFoundException: Main
+_____________________________________________________________________________________________
+The error you're seeing, "Could not find or load main class MainApp", is often due to one of the following reasons:
+
+1. **Compilation Issue**: You may not have compiled your class or compiled it in a different directory.
+
+2. **Directory Issue**: Java looks for compiled classes (.class files) based on the directory structure matching the package structure. If your `MainApp` class is in a package, you'd need to navigate to the top of the package hierarchy and run the java command from there.
+
+3. **Classpath Issue**: Sometimes, the classpath might not be set correctly, causing Java to not find your class.
+
+Let's try to solve this:
+
+### 1. Compilation
+Ensure you've compiled your classes. Navigate to the directory containing your `.java` files and execute:
+```bash
+javac MainApp.java RegexValidator.java
+```
+This should generate `.class` files in the same directory.
+
+### 2. Running the Class
+If `MainApp` is not in any package, you can run the class using:
+```bash
+java MainApp "Aa1!" 10
+```
+
+If `MainApp` is in a package, for example `com.example`, your directory structure should look something like this:
+```
+/some/directory/com/example/MainApp.class
+/some/directory/com/example/RegexValidator.class
+```
+You'd navigate to `/some/directory/` and then run:
+```bash
+java com.example.MainApp "Aa1!" 10
+```
+
+### 3. Classpath
+If you're still having issues, you might need to specify the classpath using the `-cp` or `-classpath` option. By default, the classpath is the current directory. If your compiled classes are in the current directory, you can specify:
+```bash
+java -cp . MainApp "Aa1!" 10
+```
+
+If after trying the above steps you're still encountering issues, please provide more details about your directory structure, any packages you might be using, and any other details that could be pertinent.
+__________________________________________________________________________________
+SonarCloud offers me to replace this use of System.out or System.err by a logger.
+How to do it better?
+___________________________________________________________________________________
+Replacing `System.out` and `System.err` print statements with a logger is a common best practice. Logging frameworks offer more flexibility, allow different logging levels, and can output logs to various destinations (like files, databases, etc.). Additionally, they often handle thread safety and performance considerations better than direct print statements.
+
+For Java applications, there are several popular logging frameworks such as Log4j, Logback, and java.util.logging. SLF4J (Simple Logging Facade for Java) is often used as a facade on top of these logging frameworks, allowing you to switch between them without changing your application's code.
+
+Here's how you can replace `System.out` and `System.err` with a logger using SLF4J and Logback:
+
+1. **Add Dependencies**:
+
+   If you're using Maven, add the following dependencies to your `pom.xml`:
+
+   ```xml
+   <!-- SLF4J binding -->
+   <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-api</artifactId>
+       <version>1.7.30</version> <!-- use the latest version -->
+   </dependency>
+
+   <!-- Logback core and classic modules -->
+   <dependency>
+       <groupId>ch.qos.logback</groupId>
+       <artifactId>logback-core</artifactId>
+       <version>1.2.3</version> <!-- use the latest version -->
+   </dependency>
+   <dependency>
+       <groupId>ch.qos.logback</groupId>
+       <artifactId>logback-classic</artifactId>
+       <version>1.2.3</version> <!-- use the latest version -->
+   </dependency>
+   ```
+
+2. **Create Logger Instance**:
+
+   In your class, create an instance of the logger:
+
+   ```java
+   import org.slf4j.Logger;
+   import org.slf4j.LoggerFactory;
+
+   public class MainApp {
+       private static final Logger logger = LoggerFactory.getLogger(MainApp.class);
+
+       //... rest of your code
+   }
+   ```
+
+3. **Replace Print Statements**:
+
+   Replace your `System.out.println` and `System.err.println` statements with appropriate logging levels:
+
+   ```java
+   // Instead of this:
+   // System.out.println("The input string is valid.");
+
+   // Use this:
+   logger.info("The input string is valid.");
+
+   // And for errors:
+   // System.err.println("Error message.");
+
+   // Use this:
+   logger.error("Error message.");
+   ```
+
+4. **Optional - Configure Logback**:
+
+   By default, Logback will log messages at the `DEBUG` level or higher to the console. You can further configure its behavior using an XML configuration file (typically named `logback.xml`) placed in your project's resources directory.
+
+   Here's a simple example of such a configuration:
+
+   ```xml
+   <configuration>
+       <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+           <!-- layout for the logs -->
+           <layout class="ch.qos.logback.classic.PatternLayout">
+               <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+           </layout>
+       </appender>
+
+       <root level="info"> <!-- set logging level to INFO for all classes -->
+           <appender-ref ref="STDOUT" />
+       </root>
+   </configuration>
+   ```
+
+   This configuration outputs logs in a particular pattern to the console and sets the root logging level to `INFO`.
+
+By following these steps, you can easily replace direct print statements with a more flexible and powerful logging mechanism.
+___________________________________________________________________________________
+
 
