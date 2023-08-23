@@ -36,6 +36,25 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- SLF4J binding -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version> <!-- use the latest version -->
+        </dependency>
+
+        <!-- Logback core and classic modules -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.3</version> <!-- use the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version> <!-- use the latest version -->
+        </dependency>
     </dependencies>
 
     <build>

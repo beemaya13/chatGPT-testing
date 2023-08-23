@@ -1,18 +1,41 @@
 package org.example;
 
-import static org.example.RegexValidator.validateString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main
 {
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args)
     {
-        // Test the function
-        System.out.println(validateString("Aa1~ \\n", 10));    // false
-        System.out.println(validateString("Aa1!", 10));    // true
-        System.out.println(validateString("Aa1!Aa1!A", 10));  // true
-        System.out.println(validateString("Aa1!Aa1!Aa1!", 10));   // false
-        System.out.println(validateString("aa1!", 10));    // false
-        System.out.println(validateString("aa1! ", 10));    // false
-        System.out.println(validateString("aa1!hfjdkdjhkgjhhdehujfuhydn", 10));    // false
+        if (args.length != 2)
+        {
+            logger.info("Usage: java MainApp <inputString> <maxLength>");
+            return;
+        }
+
+        String inputString = args[0];
+        int maxLength;
+
+        try
+        {
+            maxLength = Integer.parseInt(args[1]);
+        }
+        catch (NumberFormatException e)
+        {
+            logger.error("Error: The second argument should be an integer representing the maximum length.");
+            return;
+        }
+
+        boolean isValid = RegexValidator.validateString(inputString, maxLength);
+        if (isValid)
+        {
+            logger.info("The input string is valid.");
+        }
+        else
+        {
+            logger.info("The input string is invalid.");
+        }
     }
 }
