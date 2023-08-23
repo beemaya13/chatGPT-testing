@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.regex.Pattern;
 
-public class RegexValidator
+public final class RegexValidator
 {
 
     /**
@@ -21,5 +21,9 @@ public class RegexValidator
                 maxLength);
 
         return Pattern.matches(regex, input);
+    }
+
+    private RegexValidator() {
+        throw new UnsupportedOperationException("This is a utility class for validation and cannot be instantiated");
     }
 }
